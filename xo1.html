@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@1,700&display=swap"
+      rel="stylesheet"
+    />
+
+    <title>Player 1</title>
+
+    <style type="text/css">
+      body {
+        background-color: #1a1a1a;
+        font-family: "Comic Neue", cursive;
+      }
+
+      .outer {
+        width: 100%;
+        height: 90vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .container {
+        height: 310px;
+        width: 310px;
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .container > div {
+        color: #ff6666;
+        height: 100px;
+        width: 100px;
+      }
+
+      #one,
+      #two,
+      #three,
+      #four,
+      #five,
+      #six,
+      #seven,
+      #eight,
+      #nine {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 80px;
+        font-weight: bold;
+      }
+
+      #one,
+      #two,
+      #four,
+      #five {
+        border-right: 5px solid #66ff66;
+        border-bottom: 5px solid #66ff66;
+      }
+
+      #three,
+      #six {
+        border-bottom: 5px solid #66ff66;
+      }
+
+      #seven,
+      #eight {
+        border-right: 5px solid #66ff66;
+      }
+
+      #message_box {
+        font-size: 20px;
+        color: white;
+      }
+
+      #player_id {
+        width: 200px;
+        border-radius: 50px;
+        padding: 10px;
+        font-size: 15px;
+        font-weight: bold;
+      }
+
+      button {
+        font-size: 15px;
+        font-weight: bold;
+        border: none;
+        border-radius: 50px;
+        padding: 10px;
+        background-color: blue;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="outer">
+      <div class="container">
+        <div id="one" onclick="xo(0)"></div>
+        <div id="two" onclick="xo(1)"></div>
+        <div id="three" onclick="xo(2)"></div>
+        <div id="four" onclick="xo(3)"></div>
+        <div id="five" onclick="xo(4)"></div>
+        <div id="six" onclick="xo(5)"></div>
+        <div id="seven" onclick="xo(6)"></div>
+        <div id="eight" onclick="xo(7)"></div>
+        <div id="nine" onclick="xo(8)"></div>
+      </div>
+    </div>
+    <center>
+      <div id="message_box"></div>
+      <br />
+      <input type="text" id="player_id" placeholder="Enter player2 id" />
+      <button onclick="connect()" id="btn">Connect</button>
+    </center>
+  </body>
+</html>
+
+<script type="text/javascript">
+  var x = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+  var o = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+  var peer = new Peer();
+  var n,
+    conn,
+    p = 1,
+    w = 0;
+
+  peer.on("open", function (id) {
+    n = id;
+    document.getElementById("message_box").innerHTML = "Your ID : " + id;
+  });
+
+  function connect() {
+    var p_id = document.getElementById("player_id").value;
+    conn = peer.connect(p_id);
+    document.getElementById("message_box").style.display = "none";
+    document.getElementById("player_id").style.display = "none";
+    document.getElementById("btn").style.display = "none";
+    conn.on("open", function () {
+      //conn.send('Connected with: '+n);
+    });
+  }
+
+  peer.on("connection", function (conn) {
+    conn.on("data", function (data) {
+      //console.log(data);
+      switch (data) {
+        case 0:
+          document.getElementById("one").innerHTML = "o";
+          document.getElementById("one").style.color = "#8080ff";
+          break;
+        case 1:
+          document.getElementById("two").innerHTML = "o";
+          document.getElementById("two").style.color = "#8080ff";
+          break;
+        case 2:
+          document.getElementById("three").innerHTML = "o";
+          document.getElementById("three").style.color = "#8080ff";
+          break;
+        case 3:
+          document.getElementById("four").innerHTML = "o";
+          document.getElementById("four").style.color = "#8080ff";
+          break;
+        case 4:
+          document.getElementById("five").innerHTML = "o";
+          document.getElementById("five").style.color = "#8080ff";
+          break;
+        case 5:
+          document.getElementById("six").innerHTML = "o";
+          document.getElementById("six").style.color = "#8080ff";
+          break;
+        case 6:
+          document.getElementById("seven").innerHTML = "o";
+          document.getElementById("seven").style.color = "#8080ff";
+          break;
+        case 7:
+          document.getElementById("eight").innerHTML = "o";
+          document.getElementById("eight").style.color = "#8080ff";
+          break;
+        case 8:
+          document.getElementById("nine").innerHTML = "o";
+          document.getElementById("nine").style.color = "#8080ff";
+          break;
+      }
+      o[data] = 1;
+      p = p + 1;
+      checking();
+    });
+  });
+
+  function xo(box) {
+    if (w) {
+      checking();
+      return;
+    }
+    if (p % 2 == 0) {
+      swal("o turn");
+      return;
+    }
+    if (x[box] == 0 && o[box] == 0) {
+      switch (box) {
+        case 0:
+          document.getElementById("one").innerHTML = "x";
+          break;
+        case 1:
+          document.getElementById("two").innerHTML = "x";
+          break;
+        case 2:
+          document.getElementById("three").innerHTML = "x";
+          break;
+        case 3:
+          document.getElementById("four").innerHTML = "x";
+          break;
+        case 4:
+          document.getElementById("five").innerHTML = "x";
+          break;
+        case 5:
+          document.getElementById("six").innerHTML = "x";
+          break;
+        case 6:
+          document.getElementById("seven").innerHTML = "x";
+          break;
+        case 7:
+          document.getElementById("eight").innerHTML = "x";
+          break;
+        case 8:
+          document.getElementById("nine").innerHTML = "x";
+          break;
+      }
+      conn.send(box);
+      x[box] = 1;
+      p = p + 1;
+      checking();
+    } else {
+      swal("Already entered", "", "warning");
+    }
+  }
+  function checking() {
+    if (
+      (x[0] == 1 && x[1] == 1 && x[2] == 1) ||
+      (x[3] == 1 && x[4] == 1 && x[5] == 1) ||
+      (x[6] == 1 && x[7] == 1 && x[8] == 1) ||
+      (x[0] == 1 && x[3] == 1 && x[6] == 1) ||
+      (x[1] == 1 && x[4] == 1 && x[7] == 1) ||
+      (x[2] == 1 && x[5] == 1 && x[8] == 1) ||
+      (x[0] == 1 && x[4] == 1 && x[8] == 1) ||
+      (x[2] == 1 && x[4] == 1 && x[6] == 1)
+    ) {
+      swal("x is win", "");
+      w = 1;
+    } else if (
+      (o[0] == 1 && o[1] == 1 && o[2] == 1) ||
+      (o[3] == 1 && o[4] == 1 && o[5] == 1) ||
+      (o[6] == 1 && o[7] == 1 && o[8] == 1) ||
+      (o[0] == 1 && o[3] == 1 && o[6] == 1) ||
+      (o[1] == 1 && o[4] == 1 && o[7] == 1) ||
+      (o[2] == 1 && o[5] == 1 && o[8] == 1) ||
+      (o[0] == 1 && o[4] == 1 && o[8] == 1) ||
+      (o[2] == 1 && o[4] == 1 && o[6] == 1)
+    ) {
+      swal("o is win", "");
+      w = 1;
+    } else if (p == 10) {
+      swal("Match draw", "", "info");
+      w = 1;
+    }
+  }
+</script>
