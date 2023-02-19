@@ -1,0 +1,95 @@
+body {
+  width: 100vw;
+  height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0px;
+  padding: 0px;
+  background-color: #1a1a1a;
+  font-family: "Comic Neue", cursive;
+}
+
+#container {
+  height: 310px;
+  width: 310px;
+  display: none;
+  flex-wrap: wrap;
+}
+
+#container > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 80px;
+  font-weight: bold;
+  height: 100px;
+  width: 100px;
+}
+
+#one,
+#two,
+#four,
+#five {
+  border-right: 5px solid #66ff66;
+  border-bottom: 5px solid #66ff66;
+}
+
+#three,
+#six {
+  border-bottom: 5px solid #66ff66;
+}
+
+#seven,
+#eight {
+  border-right: 5px solid #66ff66;
+}
+
+#connecting {
+  //display:none;
+  width: 300px;
+  height: auto;
+  overflow-wrap: break-word;
+}
+
+#ID {
+  font-size: 20px;
+  color: #66ff66;
+}
+
+#uid {
+  width: 240px;
+  font-size: 20px;
+  font-weight: bold;
+  background-color: white;
+  color: black;
+  border: none;
+  border-radius: 10px;
+  padding: 5px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+#connbtn {
+  width: 280px;
+  font-size: 20px;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  padding: 5px;
+  background-color: blue;
+  color: white;
+}
+
+#resbtn {
+  display: none;
+  margin-top: 25px;
+  width: 310px;
+  font-size: 25px;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  padding: 5px;
+  background-color: #ff8000;
+  color: white;
+}

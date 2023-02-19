@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Player1</title>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+
+    <link href="style.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@1,700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style type="text/css">
+      #container > div {
+        color: #ff6666;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="connecting">
+      <center>
+        <div id="ID">Player1</div>
+        <br />
+        <input id="uid" placeholder="Enter player2 ID" />
+        <br />
+        <br />
+        <button id="connbtn" onclick="connection()">Connect</button>
+      </center>
+    </div>
+
+    <div id="container">
+      <div id="one" onclick="xo(0)"></div>
+      <div id="two" onclick="xo(1)"></div>
+      <div id="three" onclick="xo(2)"></div>
+      <div id="four" onclick="xo(3)"></div>
+      <div id="five" onclick="xo(4)"></div>
+      <div id="six" onclick="xo(5)"></div>
+      <div id="seven" onclick="xo(6)"></div>
+      <div id="eight" onclick="xo(7)"></div>
+      <div id="nine" onclick="xo(8)"></div>
+
+      <button id="resbtn" onclick="restart()">Restart</button>
+    </div>
+  </body>
+</html>
+<script type="text/javascript">
+  var x = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+  var o = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+  var peer = new Peer();
+  var conn = null;
+  var s = null;
+  var r = null;
+  var p = 1;
+  var w = 0;
+
+  peer.on("open", function (id) {
+    document.getElementById("ID").innerHTML = "Your ID is: " + id;
+  });
+
+  function connection() {
+    conn = peer.connect(document.getElementById("uid").value);
+    // on open will be launch when you successfully connect to PeerServer
+    conn.on("open", function () {
+      // here you have conn.id
+      s = "T";
+      conn.send("T");
+      showing(s, r);
+    });
+  }
+
+  peer.on("connection", function (conn) {
+    conn.on("data", function (data) {
+      // Will print 'hi!'
+      if (data == "T") {
+        r = "T";
+        showing(s, r);
+        return;
+      }
+      if (data == "R") {
+        r = "R";
+        showing(s, r);
+        return;
+      }
+      switch (data) {
+        case 0:
+          document.getElementById("one").innerHTML = "o";
+          document.getElementById("one").style.color = "#8080ff";
+          break;
+        case 1:
+          document.getElementById("two").innerHTML = "o";
+          document.getElementById("two").style.color = "#8080ff";
+          break;
+        case 2:
+          document.getElementById("three").innerHTML = "o";
+          document.getElementById("three").style.color = "#8080ff";
+          break;
+        case 3:
+          document.getElementById("four").innerHTML = "o";
+          document.getElementById("four").style.color = "#8080ff";
+          break;
+        case 4:
+          document.getElementById("five").innerHTML = "o";
+          document.getElementById("five").style.color = "#8080ff";
+          break;
+        case 5:
+          document.getElementById("six").innerHTML = "o";
+          document.getElementById("six").style.color = "#8080ff";
+          break;
+        case 6:
+          document.getElementById("seven").innerHTML = "o";
+          document.getElementById("seven").style.color = "#8080ff";
+          break;
+        case 7:
+          document.getElementById("eight").innerHTML = "o";
+          document.getElementById("eight").style.color = "#8080ff";
+          break;
+        case 8:
+          document.getElementById("nine").innerHTML = "o";
+          document.getElementById("nine").style.color = "#8080ff";
+          break;
+      }
+      o[data] = 1;
+      p = p + 1;
+      checking();
+    });
+  });
+
+  function showing(s, r) {
+    if (s == "T" && r == "T") {
+      document.getElementById("connecting").style.display = "none";
+      document.getElementById("container").style.display = "flex";
+    }
+    if (s == "R" && r == "R") {
+      document.getElementById("container").style.display = "flex";
+    }
+  }
+
+  function xo(box) {
+    if (w) {
+      checking();
+      return;
+    }
+    if (p % 2 == 0) {
+      swal("o turn", "");
+      return;
+    }
+    if (x[box] == 0 && o[box] == 0) {
+      switch (box) {
+        case 0:
+          document.getElementById("one").innerHTML = "x";
+          break;
+        case 1:
+          document.getElementById("two").innerHTML = "x";
+          break;
+        case 2:
+          document.getElementById("three").innerHTML = "x";
+          break;
+        case 3:
+          document.getElementById("four").innerHTML = "x";
+          break;
+        case 4:
+          document.getElementById("five").innerHTML = "x";
+          break;
+        case 5:
+          document.getElementById("six").innerHTML = "x";
+          break;
+        case 6:
+          document.getElementById("seven").innerHTML = "x";
+          break;
+        case 7:
+          document.getElementById("eight").innerHTML = "x";
+          break;
+        case 8:
+          document.getElementById("nine").innerHTML = "x";
+          break;
+      }
+      conn.send(box);
+      x[box] = 1;
+      p = p + 1;
+      checking();
+    } else {
+      swal("Already entered", "", "warning");
+    }
+  }
+  function checking() {
+    if (
+      (x[0] == 1 && x[1] == 1 && x[2] == 1) ||
+      (x[3] == 1 && x[4] == 1 && x[5] == 1) ||
+      (x[6] == 1 && x[7] == 1 && x[8] == 1) ||
+      (x[0] == 1 && x[3] == 1 && x[6] == 1) ||
+      (x[1] == 1 && x[4] == 1 && x[7] == 1) ||
+      (x[2] == 1 && x[5] == 1 && x[8] == 1) ||
+      (x[0] == 1 && x[4] == 1 && x[8] == 1) ||
+      (x[2] == 1 && x[4] == 1 && x[6] == 1)
+    ) {
+      swal("x is win", "");
+      document.getElementById("resbtn").style.display = "block";
+      s = null;
+      r = null;
+      w = 1;
+    } else if (
+      (o[0] == 1 && o[1] == 1 && o[2] == 1) ||
+      (o[3] == 1 && o[4] == 1 && o[5] == 1) ||
+      (o[6] == 1 && o[7] == 1 && o[8] == 1) ||
+      (o[0] == 1 && o[3] == 1 && o[6] == 1) ||
+      (o[1] == 1 && o[4] == 1 && o[7] == 1) ||
+      (o[2] == 1 && o[5] == 1 && o[8] == 1) ||
+      (o[0] == 1 && o[4] == 1 && o[8] == 1) ||
+      (o[2] == 1 && o[4] == 1 && o[6] == 1)
+    ) {
+      swal("o is win", "");
+      document.getElementById("resbtn").style.display = "block";
+      s = null;
+      r = null;
+      w = 1;
+    } else if (p == 10) {
+      swal("Match draw", "", "info");
+      document.getElementById("resbtn").style.display = "block";
+      s = null;
+      r = null;
+      w = 1;
+    }
+  }
+  function restart() {
+    x = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    o = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    document.getElementById("one").innerHTML = "";
+    document.getElementById("one").style.color = "#ff6666";
+    document.getElementById("two").innerHTML = "";
+    document.getElementById("two").style.color = "#ff6666";
+    document.getElementById("three").innerHTML = "";
+    document.getElementById("three").style.color = "#ff6666";
+    document.getElementById("four").innerHTML = "";
+    document.getElementById("four").style.color = "#ff6666";
+    document.getElementById("five").innerHTML = "";
+    document.getElementById("five").style.color = "#ff6666";
+    document.getElementById("six").innerHTML = "";
+    document.getElementById("six").style.color = "#ff6666";
+    document.getElementById("seven").innerHTML = "";
+    document.getElementById("seven").style.color = "#ff6666";
+    document.getElementById("eight").innerHTML = "";
+    document.getElementById("eight").style.color = "#ff6666";
+    document.getElementById("nine").innerHTML = "";
+    document.getElementById("nine").style.color = "#ff6666";
+    p = 1;
+    w = 0;
+    document.getElementById("container").style.display = "none";
+    document.getElementById("resbtn").style.display = "none";
+    s = "R";
+    conn.send("R");
+    showing(s, r);
+  }
+</script>
