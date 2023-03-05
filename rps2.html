@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Player2</title>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+
+    <link href="rps_style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="connecting">
+      <center>
+        <div id="ID">Player2</div>
+        <br />
+        <input id="uid" placeholder="Enter player1 ID" />
+        <br />
+        <br />
+        <button id="connbtn" onclick="connection()">Connect</button>
+      </center>
+    </div>
+    <center>
+      <div id="score_board">0</div>
+    </center>
+    <div id="container">
+      <div id="rps">
+        <button id="R" onclick="rps('R')" style="background-color: #ff1a1a">
+          ROCK
+        </button>
+        <br />
+        <button id="P" onclick="rps('P')" style="background-color: #009933">
+          PAPER
+        </button>
+        <br />
+        <button id="S" onclick="rps('S')" style="background-color: #1a53ff">
+          SCISSORS
+        </button>
+      </div>
+    </div>
+  </body>
+</html>
+<script type="text/javascript">
+  var conn = null;
+  var s = null;
+  var r = null;
+  var score = 0;
+  var op = 0;
+
+  var peer = new Peer();
+  peer.on("open", function (id) {
+    document.getElementById("ID").innerHTML = "Your ID is: " + id;
+  });
+
+  peer.on("connection", function (conn) {
+    conn.on("data", function (data) {
+      // Will print 'hi!'
+      if (data == "T" || data == "R" || data == "P" || data == "S") {
+        r = data;
+        showing();
+        return;
+      }
+    });
+  });
+
+  function rps(n) {
+    if (op != 0) {
+      swal("Wait", "", "warning");
+      return;
+    }
+    ++op;
+    s = n;
+    conn.send(n);
+    document.getElementById(n).style.backgroundColor = "#e6e6e6";
+    document.getElementById(n).style.color = "#1a1a1a";
+    showing();
+  }
+
+  function connection() {
+    conn = peer.connect(document.getElementById("uid").value);
+    // on open will be launch when you successfully connect to PeerServer
+    conn.on("open", function () {
+      // here you have conn.id
+      s = "T";
+      conn.send("T");
+      showing();
+    });
+  }
+
+  function showing() {
+    if ((s == null && r == null) || s == null || r == null) {
+      return;
+    } else if (s == "T" && r == "T") {
+      document.getElementById("connecting").style.display = "none";
+      document.getElementById("score_board").style.display = "flex";
+      document.getElementById("container").style.display = "flex";
+      s = null;
+      r = null;
+    } else if (
+      (s == "R" && r == "S") ||
+      (s == "P" && r == "R") ||
+      (s == "S" && r == "P")
+    ) {
+      swal("Victory!", "");
+      coloring();
+      document.getElementById("score_board").innerHTML = ++score;
+      s = null;
+      r = null;
+      op = 0;
+    } else if (
+      (s == "R" && r == "R") ||
+      (s == "P" && r == "P") ||
+      (s == "S" && r == "S")
+    ) {
+      swal("Tie", "");
+      coloring();
+      s = null;
+      r = null;
+      op = 0;
+    } else if (
+      !(
+        (s == "R" && r == "S") ||
+        (s == "P" && r == "R") ||
+        (s == "S" && r == "P")
+      )
+    ) {
+      swal("Better luck next time!", "");
+      coloring();
+      s = null;
+      r = null;
+      op = 0;
+    }
+  }
+  function coloring() {
+    document.getElementById("R").style.backgroundColor = "#ff1a1a";
+    document.getElementById("P").style.backgroundColor = "#009933";
+    document.getElementById("S").style.backgroundColor = "#1a53ff";
+    document.getElementById("R").style.color = "#ffffff";
+    document.getElementById("P").style.color = "#ffffff";
+    document.getElementById("S").style.color = "#ffffff";
+  }
+</script>
